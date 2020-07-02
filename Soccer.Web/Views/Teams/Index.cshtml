@@ -4,38 +4,82 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
-
+<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" />
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i></a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LogoPath)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LogoPath)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Teams</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover table-striped" id="MyTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.LogoPath)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.LogoPath))
+                                    {
+                                        <img src="@Url.Content(item.LogoPath)" alt="Imagen" style="width:100px;height:100px" />
+                                    }
+
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning"><i class="glyphicon glyphicon-pencil"></i></a> |
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info"><i class="glyphicon glyphicon-align-justify"></i></a> |
+                                    @*<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>*@
+                                    <button data-id="@item.Id" class="btn btn-danger deleteitem" data-toggle="modal" data-target="#deleteDialog">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_DeleteDialog"/>
+
+@section Scripts{ 
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#MyTable").DataTable();
+            var item_to_delete;
+
+            $(".deleteItem").click((e) => {
+                item_to_delete = e.currentTarget.dataset.id;
+            });
+
+            $("#btnYesDelete").click(function () {
+                window.Location.href = "/Teams/Delete/" + item_to_delete;
+            
+            });
+
+
+        });
+    </script>
 }
-    </tbody>
-</table>

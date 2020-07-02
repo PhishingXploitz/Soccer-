@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Soccer.Web.Data;
+using Soccer.Web.Helpers;
 
 namespace Soccer.Web
 {
@@ -32,7 +33,8 @@ namespace Soccer.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IConvertHelper, ConverterHelper>();
             services.AddDbContext<DataContext>( x => x.UseSqlServer(Configuration.GetConnectionString("SoccerConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
